@@ -5,15 +5,15 @@ import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpRequest;
 
-@Component
+
+
 public class ZuulLoggingFilter extends ZuulFilter {
 
-    private Logger logger= LoggerFactory.getLogger(this.getClass());
+    private static Logger log = LoggerFactory.getLogger(ZuulLoggingFilter.class);
 
     @Override
     public String filterType() {
@@ -31,11 +31,13 @@ public class ZuulLoggingFilter extends ZuulFilter {
     }
 
     @Override
-    public Object run() throws ZuulException {
+    public Object run() {
+        RequestContext ctx = RequestContext.getCurrentContext();
+        HttpServletRequest request = ctx.getRequest();
 
-       HttpServletRequest request= RequestContext.getCurrentContext().getRequest();
-        logger.info("Request Logged::",request,request.getRequestURI());
+        log.info(String.format("%s request to %s", request.getMethod(), request.getRequestURL().toString()));
 
         return null;
     }
+
 }
